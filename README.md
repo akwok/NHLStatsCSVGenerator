@@ -1,6 +1,6 @@
 # NHLStatsCSVGenerator
 
-This is a rudementary application that will scan a folder of card images (PNG, expected to be 1920x1080 -- raw from PS4 screenshots), extract statistical data from cards via OCR, and output the results to two CSV files in the same directory.
+This is a rudementary application that will scan a folder of card images from NHL 21 (PNG, expected to be ```1920x1080``` -- raw from PS4 screenshots), extract statistical data from cards via OCR, and output the results to two CSV files in the same directory.
 
 Example invocation: ```NHLStatsCSVGenerator -d "C:/NHLData/Anaheim Ducks/Anaheim Ducks/" -t "C:/tessdata"```, where:
 * ```-d``` specifies the directory to scan for
