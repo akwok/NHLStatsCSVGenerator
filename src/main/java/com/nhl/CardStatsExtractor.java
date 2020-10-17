@@ -40,6 +40,8 @@ public class CardStatsExtractor {
     private static Bounds HEIGHT_FT_BOUNDS = Bounds.numeric("HEIGHT_FT", 700, 277, 723, 308);
     private static Bounds HEIGHT_INCHES_BOUNDS = Bounds.height("HEIGHT_INCHES", 730, 277, 767, 315);
     private static Bounds METADATA_BOUNDS = Bounds.all("METADATA", 695, 281, 1913, 320);
+    private static Bounds SYNERGY_1_BOUNDS = Bounds.all("SYNERGY_1", 771, 430, 905, 460);
+    private static Bounds SYNERGY_2_BOUNDS = Bounds.all("SYNERGY_2", 771, 527, 905, 556);
 
     private static final java.util.List<Bounds> GOALIE_STAT_BOUNDS = java.util.List.of(
             //HIGH
@@ -146,6 +148,8 @@ public class CardStatsExtractor {
         }
         properties.add(Pair.of("HEIGHT", heightFt + "' " + heightInches + "\""));
         properties.addAll(extractNonHeightMetadata(ocr, buf));
+        properties.add(extractSynergy(buf, SYNERGY_1_BOUNDS));
+        properties.add(extractSynergy(buf, SYNERGY_2_BOUNDS));
         statBounds.forEach(bounds -> properties.add(extract(ocr, buf, bounds)));
 
         return Optional.of(new ExtractedCardStats(type, properties.stream().map(p -> p.getRight()).collect(Collectors.toList())));
@@ -165,6 +169,17 @@ public class CardStatsExtractor {
         });
 
         return properties;
+    }
+
+    private Pair<String, String> extractSynergy(final BufferedImage img, final Bounds bounds) {
+        final var synergy = extract(ocr, img, bounds);
+        final var synergySplit = synergy.getRight().split("\\(|\\[");
+
+        var result = synergySplit.length <= 1 ? synergy.getRight() : synergySplit[0];
+        if (result != null) {
+            result = result.trim();
+        }
+        return Pair.of(bounds.category, result);
     }
 
     private static Pair<String, String> extract(final Tesseract ocr, final BufferedImage img, final Bounds bounds) {
@@ -231,7 +246,7 @@ public class CardStatsExtractor {
     }
 
     public static class ExtractedCardStats {
-        private static final List<String> SHARED_PROPERTIES = Stream.of("NAME", "HEIGHT", "WEIGHT", "SHOOTS", "NATIONALITY", "AGE", "SALARY").collect(Collectors.toList());
+        private static final List<String> SHARED_PROPERTIES = Stream.of("NAME", "HEIGHT", "WEIGHT", "SHOOTS", "NATIONALITY", "AGE", "SALARY", "SYNERGY_1", "SYNERGY_2").collect(Collectors.toList());
         public static final List<String> GOALIE_PROPERTIES = UnmodifiableList.decorate(Stream.concat(SHARED_PROPERTIES.stream(), GOALIE_STAT_BOUNDS.stream().map(b -> b.category)).collect(Collectors.toList()));
         public static final List<String> SKATER_PROPERTIES = UnmodifiableList.decorate(Stream.concat(SHARED_PROPERTIES.stream(), SKATER_STAT_BOUNDS.stream().map(b -> b.category)).collect(Collectors.toList()));
 
