@@ -1,5 +1,6 @@
 package com.nhl;
 
+import com.google.common.collect.ImmutableMap;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.collections.list.UnmodifiableList;
@@ -7,10 +8,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,6 +46,26 @@ public class CardStatsExtractor {
     private static Bounds METADATA_BOUNDS = Bounds.all("METADATA", 695, 281, 1913, 320);
     private static Bounds SYNERGY_1_BOUNDS = Bounds.all("SYNERGY_1", 771, 430, 905, 460);
     private static Bounds SYNERGY_2_BOUNDS = Bounds.all("SYNERGY_2", 771, 527, 905, 556);
+
+    private static Map<String, String> SYNERGIES_MAP = ImmutableMap
+            .<String, String>builder()
+            .put("gladiator","GL")
+            .put("howitzer","HW")
+            .put("passing playmaker","PP")
+            .put("speedster","SP")
+            .put("light the lamp","LL")
+            .put("magician","M")
+            .put("thief","T")
+            .put("wingman","WM")
+            .put("shutdown","SD")
+            .put("workhorse","WH")
+            .put("balanced","BA")
+            .put("barrage","BR")
+            .put("distributor","DB")
+            .put("heart and soul","HS")
+            .put("spark","S")
+            .put("swarm","SW")
+            .build();
 
     private static final java.util.List<Bounds> GOALIE_STAT_BOUNDS = java.util.List.of(
             //HIGH
@@ -149,8 +168,7 @@ public class CardStatsExtractor {
         properties.add(Pair.of("last_name", tryGetOrDefault(fullNameSplit, 1, "")));
         properties.add(Pair.of("height", extractHeightInCm(buf)));
         properties.addAll(extractNonHeightMetadata(ocr, buf));
-        properties.add(extractSynergy(buf, SYNERGY_1_BOUNDS));
-        properties.add(extractSynergy(buf, SYNERGY_2_BOUNDS));
+        properties.add(Pair.of("synergies", extractSynergies(buf));
         statBounds.forEach(bounds -> properties.add(extract(ocr, buf, bounds)));
 
         return Optional.of(new ExtractedCardStats(type, properties.stream().map(p -> p.getRight()).collect(Collectors.toList())));
@@ -190,7 +208,16 @@ public class CardStatsExtractor {
         return properties;
     }
 
-    private Pair<String, String> extractSynergy(final BufferedImage img, final Bounds bounds) {
+    private String extractSynergies(final BufferedImage buf) {
+        return Stream
+                .of(
+                    extractSynergyCode(buf, SYNERGY_1_BOUNDS),
+                    extractSynergyCode(buf, SYNERGY_1_BOUNDS))
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(","));
+
+    }
+    private String extractSynergyCode(final BufferedImage img, final Bounds bounds) {
         final var synergy = extract(ocr, img, bounds);
         final var synergySplit = synergy.getRight().split("\\(|\\[");
 
@@ -198,7 +225,9 @@ public class CardStatsExtractor {
         if (result != null) {
             result = result.trim();
         }
-        return Pair.of(bounds.category, result);
+
+        final String synergyCode = SYNERGIES_MAP.getOrDefault(result, null);
+        return synergyCode;
     }
 
     private static Pair<String, String> extract(final Tesseract ocr, final BufferedImage img, final Bounds bounds) {
