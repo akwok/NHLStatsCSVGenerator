@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CardStatsExtractor {
+    private static final double CM_PER_INCH = 2.54;
     private static final Rectangle REQUIRED_INPUT_SIZE = new Rectangle(1920, 1080);
 
     //Card stats are laid out on a grid, with 10 rows and 3 columns
@@ -139,6 +140,16 @@ public class CardStatsExtractor {
         }
 
         properties.add(extract(ocr, buf, NAME_BOUNDS));
+        properties.add(Pair.of("HEIGHT", extractHeightInCm(buf)));
+        properties.addAll(extractNonHeightMetadata(ocr, buf));
+        properties.add(extractSynergy(buf, SYNERGY_1_BOUNDS));
+        properties.add(extractSynergy(buf, SYNERGY_2_BOUNDS));
+        statBounds.forEach(bounds -> properties.add(extract(ocr, buf, bounds)));
+
+        return Optional.of(new ExtractedCardStats(type, properties.stream().map(p -> p.getRight()).collect(Collectors.toList())));
+    }
+
+    private String extractHeightInCm(final BufferedImage buf) {
         var heightFt = (extract(ocr, buf, HEIGHT_FT_BOUNDS)).getRight();
         var heightInches = extract(ocr, buf, HEIGHT_INCHES_BOUNDS).getRight();
 
@@ -146,13 +157,22 @@ public class CardStatsExtractor {
         if (heightInches.equalsIgnoreCase("111")) {
             heightInches = "11";
         }
-        properties.add(Pair.of("HEIGHT", heightFt + "' " + heightInches + "\""));
-        properties.addAll(extractNonHeightMetadata(ocr, buf));
-        properties.add(extractSynergy(buf, SYNERGY_1_BOUNDS));
-        properties.add(extractSynergy(buf, SYNERGY_2_BOUNDS));
-        statBounds.forEach(bounds -> properties.add(extract(ocr, buf, bounds)));
 
-        return Optional.of(new ExtractedCardStats(type, properties.stream().map(p -> p.getRight()).collect(Collectors.toList())));
+        return String.valueOf(toCentimeters(heightFt, heightInches));
+    }
+
+    private int toCentimeters(final String ftStr, final String inchesStr) {
+        final int feet = tryParse(ftStr, 0);
+        final int inches = tryParse(inchesStr, 0);
+        return (int)((feet * 12 + inches) * CM_PER_INCH);
+    }
+
+    private int tryParse(final String string, final int defaultVal) {
+        try {
+            return Integer.parseInt(string);
+        } catch (NumberFormatException e) {
+            return defaultVal;
+        }
     }
 
     private static List<Pair<String, String>> extractNonHeightMetadata(final Tesseract ocr, final BufferedImage img) {
