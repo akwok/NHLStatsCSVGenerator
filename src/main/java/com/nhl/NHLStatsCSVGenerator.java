@@ -3,14 +3,10 @@ package com.nhl;
 import com.nhl.CardStatsExtractor.ExtractedCardStats;
 import com.nhl.CardStatsExtractor.ExtractedCardStats.CardType;
 import net.sourceforge.tess4j.Tesseract;
-import org.apache.commons.cli.*;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -18,12 +14,25 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class NHLStatsCSVGenerator {
-    public static void main(String[] args) {
-        final var dirAndTessPaths = getDirAndTessPaths(args);
+import static com.nhl.Helpers.concat;
 
-        final var directory = dirAndTessPaths.getLeft();
-        final var tessDataPath = dirAndTessPaths.getRight();
+public class NHLStatsCSVGenerator {
+    private static final List<String> SHARED_CSV_COLUMNS = List.of(
+            "card_type_id",
+            "league_id",
+            "approved",
+            "card_level"
+    );
+
+    public static void main(String[] args) throws IOException {
+        final var directory = prompt("Directory for card images? E.g., C:/NHLData/Anaheim Ducks/");
+        final var tessDataPath = prompt("Directory for tesseract training data? E.g., C:/tessdata");
+        final List<String> sharedCsvColumnData = List.of(
+                prompt("card_type_id?"),
+                prompt("league_id?"),
+                prompt("approved?"),
+                prompt("card_level?")
+        );
 
         final var dir = new File(directory);
         final var files = dir.listFiles((dir1, name) -> name.endsWith(".png"));
@@ -45,32 +54,20 @@ public class NHLStatsCSVGenerator {
         final var goalies = allCards.stream().filter(c -> c.getCardType() == CardType.GOALIE);
         final var skaters = allCards.stream().filter(c -> c.getCardType() == CardType.SKATER);
 
-        outputToCsv(ExtractedCardStats.GOALIE_PROPERTIES, goalies.map(c -> c.getStats()).collect(Collectors.toList()), Paths.get(directory, "goalies.csv").toString());
-        outputToCsv(ExtractedCardStats.SKATER_PROPERTIES, skaters.map(c -> c.getStats()).collect(Collectors.toList()), Paths.get(directory, "skaters.csv").toString());
+        outputToCsv(
+                concat(SHARED_CSV_COLUMNS, ExtractedCardStats.GOALIE_PROPERTIES),
+                goalies.map(c -> concat(sharedCsvColumnData, c.getStats())).collect(Collectors.toList()),
+                Paths.get(directory, "goalies.csv").toString());
+        outputToCsv(
+                concat(SHARED_CSV_COLUMNS, ExtractedCardStats.SKATER_PROPERTIES),
+                skaters.map(c -> concat(sharedCsvColumnData, c.getStats())).collect(Collectors.toList()),
+                Paths.get(directory, "skaters.csv").toString());
     }
 
-    private static Pair<String, String> getDirAndTessPaths(final String[] args) {
-        final var options = new Options();
-
-        final var dirOption = new Option("d", "directory", true, "Input directory (e.g., C:\\NHLData\\Anaheim Ducks)");
-        dirOption.setRequired(true);
-        options.addOption(dirOption);
-
-        final var tessDataOption = new Option("t", "tessDataPath", true, "Tesseract data path (e.g., C:\\tessdata)");
-        tessDataOption.setRequired(true);
-        options.addOption(tessDataOption);
-
-        HelpFormatter formatter = new HelpFormatter();
-
-        try {
-            DefaultParser parser = new DefaultParser();
-            var result = parser.parse(options, args);
-            return Pair.of(result.getOptionValue("directory"), result.getOptionValue("tessDataPath"));
-        } catch (ParseException e) {
-            System.out.println("Invalid arguments:");
-            formatter.printHelp("utility-name", options);
-            throw new RuntimeException(e);
-        }
+    private static String prompt(final String message) throws IOException {
+        final var reader = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println(message);
+        return reader.readLine();
     }
 
     private static void outputToCsv(final List<String> header, final List<List<String>> values, final String outputPath) {
