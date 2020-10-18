@@ -14,7 +14,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.nhl.Helpers.tryGetOrDefault;
+import static com.nhl.Helpers.tryParse;
+
 public class CardStatsExtractor {
+    private static final int INCHES_PER_FOOT = 12;
     private static final double CM_PER_INCH = 2.54;
     private static final Rectangle REQUIRED_INPUT_SIZE = new Rectangle(1920, 1080);
 
@@ -139,8 +143,11 @@ public class CardStatsExtractor {
             statBounds = SKATER_STAT_BOUNDS;
         }
 
-        properties.add(extract(ocr, buf, NAME_BOUNDS));
-        properties.add(Pair.of("HEIGHT", extractHeightInCm(buf)));
+        final var fullName = extract(ocr, buf, NAME_BOUNDS).getRight();
+        final var fullNameSplit = fullName != null ? fullName.split(" ") : new String[]{};
+        properties.add(Pair.of("first_name", tryGetOrDefault(fullNameSplit, 0, "")));
+        properties.add(Pair.of("last_name", tryGetOrDefault(fullNameSplit, 1, "")));
+        properties.add(Pair.of("height", extractHeightInCm(buf)));
         properties.addAll(extractNonHeightMetadata(ocr, buf));
         properties.add(extractSynergy(buf, SYNERGY_1_BOUNDS));
         properties.add(extractSynergy(buf, SYNERGY_2_BOUNDS));
@@ -164,15 +171,7 @@ public class CardStatsExtractor {
     private int toCentimeters(final String ftStr, final String inchesStr) {
         final int feet = tryParse(ftStr, 0);
         final int inches = tryParse(inchesStr, 0);
-        return (int)((feet * 12 + inches) * CM_PER_INCH);
-    }
-
-    private int tryParse(final String string, final int defaultVal) {
-        try {
-            return Integer.parseInt(string);
-        } catch (NumberFormatException e) {
-            return defaultVal;
-        }
+        return (int)((feet * INCHES_PER_FOOT + inches) * CM_PER_INCH);
     }
 
     private static List<Pair<String, String>> extractNonHeightMetadata(final Tesseract ocr, final BufferedImage img) {
