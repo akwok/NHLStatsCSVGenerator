@@ -169,7 +169,14 @@ public class CardStatsExtractor {
         properties.add(Pair.of("height", extractHeightInCm(buf)));
         properties.addAll(extractNonHeightMetadata(ocr, buf));
         properties.add(Pair.of("synergies", extractSynergies(buf)));
-        statBounds.forEach(bounds -> properties.add(extract(ocr, buf, bounds)));
+        statBounds.forEach(bounds -> {
+            var extracted = extract(ocr, buf, bounds);
+            //hacking it so that extracted stats equals just "7" implies "77" due to poor ocr
+            if (extracted.getRight().equals("7")) {
+                extracted = Pair.of(extracted.getLeft(), "77");
+            }
+            properties.add(extracted);
+        });
 
         return Optional.of(new ExtractedCardStats(type, properties.stream().map(p -> p.getRight()).collect(Collectors.toList())));
     }
