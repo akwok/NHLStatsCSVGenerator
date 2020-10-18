@@ -69,65 +69,65 @@ public class CardStatsExtractor {
 
     private static final java.util.List<Bounds> GOALIE_STAT_BOUNDS = java.util.List.of(
             //HIGH
-            Bounds.numeric("GLOVE HIGH", COL_1_PX, ROW_1_PX),
-            Bounds.numeric("STICK HIGH", COL_1_PX, ROW_2_PX),
+            Bounds.numeric("glove_high", COL_1_PX, ROW_1_PX),
+            Bounds.numeric("stick_high", COL_1_PX, ROW_2_PX),
 
             //LOW
-            Bounds.numeric("GLOVE LOW", COL_2_PX, ROW_1_PX),
-            Bounds.numeric("POKE CHECK", COL_2_PX, ROW_2_PX),
-            Bounds.numeric("STICK LOW", COL_2_PX, ROW_3_PX),
-            Bounds.numeric("PASSING", COL_2_PX, ROW_4_PX),
+            Bounds.numeric("glove_low", COL_2_PX, ROW_1_PX),
+            Bounds.numeric("poke_check", COL_2_PX, ROW_2_PX),
+            Bounds.numeric("stick_low", COL_2_PX, ROW_3_PX),
+            Bounds.numeric("passing", COL_2_PX, ROW_4_PX),
 
             //QUICKNESS
-            Bounds.numeric("SPEED", COL_3_PX, ROW_1_PX),
-            Bounds.numeric("VISION", COL_3_PX, ROW_2_PX),
-            Bounds.numeric("AGILITY", COL_3_PX, ROW_3_PX),
+            Bounds.numeric("speed", COL_3_PX, ROW_1_PX),
+            Bounds.numeric("vision", COL_3_PX, ROW_2_PX),
+            Bounds.numeric("agility", COL_3_PX, ROW_3_PX),
 
             //POSITION
-            Bounds.numeric("POSITIONING", COL_1_PX, ROW_6_PX),
-            Bounds.numeric("5 HOLE", COL_1_PX, ROW_7_PX),
-            Bounds.numeric("BREAKAWAY", COL_1_PX, ROW_8_PX),
+            Bounds.numeric("positioning", COL_1_PX, ROW_6_PX),
+            Bounds.numeric("five_hole", COL_1_PX, ROW_7_PX),
+            Bounds.numeric("breakaway", COL_1_PX, ROW_8_PX),
 
             //REBOUND CONTROL
-            Bounds.numeric("AGGRESSION", COL_2_PX, ROW_6_PX),
-            Bounds.numeric("REBOUND CONTROL", COL_2_PX, ROW_7_PX),
-            Bounds.numeric("SHOT RECOVERY", COL_2_PX, ROW_8_PX)
+            Bounds.numeric("aggression", COL_2_PX, ROW_6_PX),
+            Bounds.numeric("rebound_control", COL_2_PX, ROW_7_PX),
+            Bounds.numeric("shot_recovery", COL_2_PX, ROW_8_PX)
     );
 
     private static final java.util.List<Bounds> SKATER_STAT_BOUNDS = List.of(
             //SKATING
-            Bounds.numeric("ACCELERATION", COL_1_PX, ROW_1_PX),
-            Bounds.numeric("AGILITY", COL_1_PX, ROW_2_PX),
-            Bounds.numeric("BALANCE", COL_1_PX, ROW_3_PX),
-            Bounds.numeric("ENDURANCE", COL_1_PX, ROW_4_PX),
-            Bounds.numeric("SPEED", COL_1_PX, ROW_5_PX),
+            Bounds.numeric("acceleration", COL_1_PX, ROW_1_PX),
+            Bounds.numeric("agility", COL_1_PX, ROW_2_PX),
+            Bounds.numeric("balance", COL_1_PX, ROW_3_PX),
+            Bounds.numeric("endurance", COL_1_PX, ROW_4_PX),
+            Bounds.numeric("speed", COL_1_PX, ROW_5_PX),
 
             //SHOOTING
-            Bounds.numeric("SLAP SHOT ACCURACY", COL_2_PX, ROW_1_PX),
-            Bounds.numeric("SLAP SHOT POWER", COL_2_PX, ROW_2_PX),
-            Bounds.numeric("WRIST SHOT ACCURACY", COL_2_PX, ROW_3_PX),
-            Bounds.numeric("WRIST SHOT POWER", COL_2_PX, ROW_4_PX),
+            Bounds.numeric("slap_shot_accuracy", COL_2_PX, ROW_1_PX),
+            Bounds.numeric("slap_shot_power", COL_2_PX, ROW_2_PX),
+            Bounds.numeric("wrist_shot_accuracy", COL_2_PX, ROW_3_PX),
+            Bounds.numeric("wrist_shot_power", COL_2_PX, ROW_4_PX),
 
             //HANDS
-            Bounds.numeric("DEKING", COL_3_PX, ROW_1_PX),
-            Bounds.numeric("OFF. AWARENESS", COL_3_PX, ROW_2_PX),
-            Bounds.numeric("HAND-EYE", COL_3_PX, ROW_3_PX),
-            Bounds.numeric("PASSING", COL_3_PX, ROW_4_PX),
-            Bounds.numeric("PUCK CONTROL", COL_3_PX, ROW_5_PX),
+            Bounds.numeric("deking", COL_3_PX, ROW_1_PX),
+            Bounds.numeric("off_awareness", COL_3_PX, ROW_2_PX),
+            Bounds.numeric("hand_eye", COL_3_PX, ROW_3_PX),
+            Bounds.numeric("passing", COL_3_PX, ROW_4_PX),
+            Bounds.numeric("puck_control", COL_3_PX, ROW_5_PX),
 
             //DEFENSE
-            Bounds.numeric("BODY CHECKING", COL_1_PX, ROW_6_PX),
-            Bounds.numeric("STRENGTH", COL_1_PX, ROW_7_PX),
-            Bounds.numeric("AGGRESSION", COL_1_PX, ROW_8_PX),
-            Bounds.numeric("DURABILITY", COL_1_PX, ROW_9_PX),
-            Bounds.numeric("FIGHTING SKILL", COL_1_PX, ROW_10_PX),
+            Bounds.numeric("body_checking", COL_1_PX, ROW_6_PX),
+            Bounds.numeric("strength", COL_1_PX, ROW_7_PX),
+            Bounds.numeric("aggression", COL_1_PX, ROW_8_PX),
+            Bounds.numeric("durability", COL_1_PX, ROW_9_PX),
+            Bounds.numeric("fighting_skill", COL_1_PX, ROW_10_PX),
 
             //DEFENSE
-            Bounds.numeric("DEF. AWARENESS", COL_2_PX, ROW_6_PX),
-            Bounds.numeric("SHOT BLOCKING", COL_2_PX, ROW_7_PX),
-            Bounds.numeric("STICK CHECKING", COL_2_PX, ROW_8_PX),
-            Bounds.numeric("FACEOFFS", COL_2_PX, ROW_9_PX),
-            Bounds.numeric("DISCIPLINE", COL_2_PX, ROW_10_PX)
+            Bounds.numeric("off_awareness", COL_2_PX, ROW_6_PX),
+            Bounds.numeric("shot_blocking", COL_2_PX, ROW_7_PX),
+            Bounds.numeric("stick_checking", COL_2_PX, ROW_8_PX),
+            Bounds.numeric("faceoffs", COL_2_PX, ROW_9_PX),
+            Bounds.numeric("discipline", COL_2_PX, ROW_10_PX)
     );
 
     private enum BoundType {
@@ -294,7 +294,7 @@ public class CardStatsExtractor {
     }
 
     public static class ExtractedCardStats {
-        private static final List<String> SHARED_PROPERTIES = Stream.of("NAME", "HEIGHT", "WEIGHT", "SHOOTS", "NATIONALITY", "AGE", "SALARY", "SYNERGY_1", "SYNERGY_2").collect(Collectors.toList());
+        private static final List<String> SHARED_PROPERTIES = Stream.of("first_name", "last_name", "height", "weight", "handedness", "nationality", "age", "salary", "synergies").collect(Collectors.toList());
         public static final List<String> GOALIE_PROPERTIES = UnmodifiableList.decorate(Stream.concat(SHARED_PROPERTIES.stream(), GOALIE_STAT_BOUNDS.stream().map(b -> b.category)).collect(Collectors.toList()));
         public static final List<String> SKATER_PROPERTIES = UnmodifiableList.decorate(Stream.concat(SHARED_PROPERTIES.stream(), SKATER_STAT_BOUNDS.stream().map(b -> b.category)).collect(Collectors.toList()));
 
