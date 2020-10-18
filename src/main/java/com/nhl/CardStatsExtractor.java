@@ -168,7 +168,7 @@ public class CardStatsExtractor {
         properties.add(Pair.of("last_name", tryGetOrDefault(fullNameSplit, 1, "")));
         properties.add(Pair.of("height", extractHeightInCm(buf)));
         properties.addAll(extractNonHeightMetadata(ocr, buf));
-        properties.add(Pair.of("synergies", extractSynergies(buf));
+        properties.add(Pair.of("synergies", extractSynergies(buf)));
         statBounds.forEach(bounds -> properties.add(extract(ocr, buf, bounds)));
 
         return Optional.of(new ExtractedCardStats(type, properties.stream().map(p -> p.getRight()).collect(Collectors.toList())));
@@ -212,7 +212,7 @@ public class CardStatsExtractor {
         return Stream
                 .of(
                     extractSynergyCode(buf, SYNERGY_1_BOUNDS),
-                    extractSynergyCode(buf, SYNERGY_1_BOUNDS))
+                    extractSynergyCode(buf, SYNERGY_2_BOUNDS))
                 .filter(Objects::nonNull)
                 .collect(Collectors.joining(","));
 
@@ -222,11 +222,9 @@ public class CardStatsExtractor {
         final var synergySplit = synergy.getRight().split("\\(|\\[");
 
         var result = synergySplit.length <= 1 ? synergy.getRight() : synergySplit[0];
-        if (result != null) {
-            result = result.trim();
-        }
+        result = result != null ? result.trim() : "";
 
-        final String synergyCode = SYNERGIES_MAP.getOrDefault(result, null);
+        final String synergyCode = SYNERGIES_MAP.getOrDefault(result.toLowerCase(), null);
         return synergyCode;
     }
 
